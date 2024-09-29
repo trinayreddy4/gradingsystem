@@ -1,6 +1,12 @@
 package com.gradingsystem.gradingsystem.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,43 +17,52 @@ import com.gradingsystem.gradingsystem.exception.UsernameAlreadyExistsException;
 import com.gradingsystem.gradingsystem.model.Role;
 import com.gradingsystem.gradingsystem.model.User;
 import com.gradingsystem.gradingsystem.repository.UserRepository;
-
+import com.gradingsystem.gradingsystem.util.JwtUtil;
 
 @Service
 public class UserService implements UserDetailsService {
 
-    @Autowired
+	@Autowired
     private UserRepository userRepository;
+
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public void registerUser(User user) {
-    	long existingUser = userRepository.findByUsername(user.getUsername());
-        if (existingUser>0) {
+        long existingUserCount = userRepository.findByUsername(user.getUsername());
+        if (existingUserCount > 0) {
             throw new UsernameAlreadyExistsException("Username already exists!");
         }
         // Encode password before saving
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        if(user.getRole()!=null)
-        {
-        	user.setRole(Role.TEACHER);
+        
+        // Set default role if not specified
+        if (user.getRole() == null) {
+            user.setRole(Role.STUDENT);  // or any default role you prefer
         }
+
         userRepository.save(user);
     }
-    
+    @Autowired
+    private JwtUtil jwtUtil;
+
     public String login(String username, String password) {
-        // Find the user by username
-//    	System.out.print(username);
-//    	String passworde = passwordEncoder. 
+    	System.out.println("Logging in user: " + username);
+
         User userOptional = userRepository.findByUsernameToLogin(username);
-        System.out.println(userOptional);
-        if (userOptional!=null) {
-            User user = userOptional;
+        	
+        if (userOptional != null) {
             // Check if the password matches
-            if (passwordEncoder.matches(password, user.getPassword())) {
-                // Successful login
-                return "Login successful! Welcome, " + user.getUsername();
+            if (passwordEncoder.matches(password, userOptional.getPassword())) {
+                // Generate JWT token
+                return jwtUtil.generateToken(username);
             } else {
                 // Incorrect password
                 throw new IllegalArgumentException("Invalid credentials: Password does not match.");
@@ -60,12 +75,18 @@ public class UserService implements UserDetailsService {
     
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    		return null;
+        User user = userRepository.findByUsernameToLogin(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return new org.springframework.security.core.userdetails.User(
+            user.getUsername(), user.getPassword(), getAuthorities(user));
     }
 
-//    private Collection<? extends GrantedAuthority> getAuthorities(User user) {
-//        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-//        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
-//        return authorities;
-//    }
+
+    private Collection<? extends GrantedAuthority> getAuthorities(User user) {
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())); // Adjust based on how you defined roles
+        return authorities;
+    }
 }

@@ -23,11 +23,10 @@ public class AuthController {
          return ResponseEntity.status(201).body("User registered successfully!");
     }
 
-    // Login endpoint (for demonstration purposes)
+
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-//    	System.out.println(loginRequest.getPassword());
-        String message = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
-        return ResponseEntity.ok(message);
+        String token = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+        return ResponseEntity.ok(token);
     }
 }
