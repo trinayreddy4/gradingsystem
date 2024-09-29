@@ -1,11 +1,6 @@
 package com.gradingsystem.gradingsystem.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,7 +17,10 @@ public class Assignment {
 
     private LocalDateTime dueDate;
 
-    private String filePath; // To store the path of the uploaded file
+    private String filePath; // Path of the uploaded file
+    
+    private int totalMarks;
+
 
     // Getters and Setters
 
@@ -65,4 +63,14 @@ public class Assignment {
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
+
+    public int getTotalMarks() {
+        return totalMarks;
+    }
+
+    public void setTotalMarks(int totalMarks) {
+        this.totalMarks = totalMarks;
+    }
+
+    
 }

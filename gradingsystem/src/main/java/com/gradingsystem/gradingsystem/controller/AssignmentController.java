@@ -31,19 +31,23 @@ public class AssignmentController {
     private FileStorageService fileStorageService;
 
     @PreAuthorize("hasRole('TEACHER') or hasRole('ADMIN')")
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<Assignment> createAssignment(
             @RequestParam("title") String title,
             @RequestParam("description") String description,
             @RequestParam("dueDate") String dueDate,
+            @RequestParam("totalMarks") String totalMarks,
             @RequestParam("file") MultipartFile file) {
 
         try {
+//        	System.out.println(title);
             String filePath = fileStorageService.storeFile(file);
+//            System.out.println("Jai Ballayya");
             Assignment assignment = new Assignment();
             assignment.setTitle(title);
             assignment.setDescription(description);
             assignment.setDueDate(LocalDateTime.parse(dueDate));
+            assignment.setTotalMarks(new Integer(totalMarks));
             assignment.setFilePath(filePath);
 
             Assignment createdAssignment = assignmentService.createAssignment(assignment);
@@ -53,11 +57,11 @@ public class AssignmentController {
         }
     }
 
-    @GetMapping
-    public List<String> getAllAssignments() {
-//        List<Assignment> assignments = assignmentService.getAllAssignments();
-//        return new ResponseEntity<>(assignments, HttpStatus.OK);
-    	 return List.of("Assignment 1", "Assignment 2", "Assignment 3");
+    @GetMapping("/")
+    public ResponseEntity<Assignment> getAllAssignments() {
+        List<Assignment> assignments = assignmentService.getAllAssignments();
+        return new ResponseEntity<Assignment>(HttpStatus.OK);
+//    	 return List.of("Assignment 1", "Assignment 2", "Assignment 3");
     }
 
     @GetMapping("/{id}")

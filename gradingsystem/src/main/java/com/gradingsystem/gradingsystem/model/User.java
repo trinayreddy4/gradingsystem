@@ -15,11 +15,13 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private Long id;
     
-    @Column(unique = true) 
+    @Column(unique = true,nullable = false) 
     private String username;
 
+    @Column(nullable = false)
     private String password;  // Store plain text password for simplicity
 
     @Enumerated(EnumType.STRING) // Ensure the role is stored as a string

@@ -37,8 +37,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
             .authorizeHttpRequests(requests -> requests
-                .requestMatchers("/api/auth/register", "/api/auth/login").permitAll() // Allow registration and login
-                .requestMatchers("/api/assignments").authenticated() // Protect the assignments endpoint
+                .requestMatchers("/api/auth/register", "/api/auth/login","/api/assignments").permitAll() // Allow registration and login
+                .requestMatchers("/").authenticated() // Protect the assignments endpoint
                 .anyRequest().authenticated() // Protect all other requests
             )
             .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class); // Add JWT filter

@@ -61,8 +61,11 @@ public class UserService implements UserDetailsService {
         if (userOptional != null) {
             // Check if the password matches
             if (passwordEncoder.matches(password, userOptional.getPassword())) {
-                // Generate JWT token
-                return jwtUtil.generateToken(username);
+            	List<String> roles = new ArrayList<>();
+                roles.add(userOptional.getRole().name()); // Assuming role is an enum
+
+                // Generate JWT token with roles
+                return jwtUtil.generateToken(username, roles);
             } else {
                 // Incorrect password
                 throw new IllegalArgumentException("Invalid credentials: Password does not match.");
