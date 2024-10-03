@@ -1,5 +1,7 @@
 package com.gradingsystem.gradingsystem.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,22 +13,17 @@ import com.gradingsystem.gradingsystem.service.UserService;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-
-
-    // Registration endpoint
     @Autowired
     private UserService userService;
-
-    @PostMapping("/register")  // This maps POST requests to /auth/register
+    @PostMapping("/register")  
     public ResponseEntity<String> registerUser(@RequestBody User user) {
-    	 userService.registerUser(user); // No need for try-catch; handled globally
+    	 userService.registerUser(user); 
          return ResponseEntity.status(201).body("User registered successfully!");
     }
-
-
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-        String token = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
-        return ResponseEntity.ok(token);
+    @CrossOrigin(origins = "*", allowedHeaders ="*")
+    public ResponseEntity<Map<String,Object>> login(@RequestBody LoginRequest loginRequest) {
+        var res = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+        return ResponseEntity.ok(res);
     }
 }

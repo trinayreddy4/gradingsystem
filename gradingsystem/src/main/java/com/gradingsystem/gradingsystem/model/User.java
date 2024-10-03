@@ -22,23 +22,21 @@ public class User {
     private String username;
 
     @Column(nullable = false)
-    private String password;  // Store plain text password for simplicity
+    private String password; 
 
-    @Enumerated(EnumType.STRING) // Ensure the role is stored as a string
-    private Role role = Role.STUDENT; // Default role set to STUDENT
+    @Enumerated(EnumType.STRING) 
+    private Role role = Role.STUDENT; 
 
-    // Default Constructor
+
     public User() {
     }
 
-    // Constructor with fields
     public User(String username, String password, Role role) {
         this.username = username;
         this.password = password;
         this.role = role;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

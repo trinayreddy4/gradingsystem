@@ -36,20 +36,20 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String jwt = null;
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-        	System.out.print("Here");
-            jwt = authorizationHeader.substring(7); // Extract token from "Bearer <token>"
-            System.out.println(jwt);
-            username = jwtUtil.extractUsername(jwt); // Extract username from the token
-            System.out.println("Here2");
+//        	System.out.print("Here");
+            jwt = authorizationHeader.substring(7);
+//            System.out.println(jwt);
+            username = jwtUtil.extractUsername(jwt);
+//            System.out.println("Here2");
             System.out.println(username);
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userService.loadUserByUsername(username); // Load user details
+            UserDetails userDetails = userService.loadUserByUsername(username); 
             if (jwtUtil.validateToken(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authToken); // Set authentication
+                SecurityContextHolder.getContext().setAuthentication(authToken); 
             } else {
                 logger.debug("JWT token validation failed for user: " + username);
             }
@@ -57,6 +57,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             logger.debug("No JWT token found or user already authenticated");
         }
 
-        chain.doFilter(request, response); // Continue the filter chain
+        chain.doFilter(request, response); 
     }
 }

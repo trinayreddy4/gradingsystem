@@ -17,12 +17,9 @@ public class Assignment {
 
     private LocalDateTime dueDate;
 
-    private String filePath; // Path of the uploaded file
+    private String filePath; 
     
     private int totalMarks;
-
-
-    // Getters and Setters
 
     public Long getId() {
         return id;

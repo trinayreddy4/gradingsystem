@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true) // Enable method-level security
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Autowired
@@ -37,11 +37,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
             .authorizeHttpRequests(requests -> requests
-                .requestMatchers("/api/auth/register", "/api/auth/login","/api/assignments").permitAll() // Allow registration and login
-                .requestMatchers("/").authenticated() // Protect the assignments endpoint
-                .anyRequest().authenticated() // Protect all other requests
+                .requestMatchers("/api/auth/register", "/api/auth/login","/api/assignments").permitAll()
+                .requestMatchers("/").authenticated()
+                .anyRequest().authenticated() 
             )
-            .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class); // Add JWT filter
+            .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class); 
         return http.build();
     }
 
